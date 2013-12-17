@@ -1,0 +1,7 @@
+{
+  "name": "tilestream-sixdegreees",
+  "version": "0.0.3",
+  "dependencies": {
+    "tilestream": "1.1.0"
+  }
+}

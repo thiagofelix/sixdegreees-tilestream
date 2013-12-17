@@ -1,0 +1,13 @@
+description "tilestream mbtiles server"
+
+env TILESTREAM_HOME=/var/www/tilestream
+
+start on runlevel [2]
+stop on runlevel [016]
+
+script
+    chdir $TILESTREAM_HOME
+    NODE_ENV=production exec ./node_modules/tilestream/index.js --host=172.16.1.100 --uiPort=9001 --tilePort=9000 --tiles=./tiles >> /var/log/tilestream.log 2>&1
+end script
+
+respawn
