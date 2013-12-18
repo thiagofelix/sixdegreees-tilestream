@@ -23,29 +23,28 @@ class tilestream::install {
 	file { 'tilestream-home':
 		path => '/var/www/tilestream',
 		ensure => 'directory',
-		require => File['/var/www'],
 	}->
 	file { 'tilestream-home-tiles':
 		path => '/var/www/tilestream/tiles',
 		ensure => 'directory',
-		require => File['tilestream-home'],
 	}->
 	file { 'tilestream-package.json':
 		path => '/var/www/tilestream/package.json',
 		source => 'puppet:///modules/tilestream/package.json',
-		require => File['tilestream-home'],
+		notify => Exec['installing-tilestream-dependencies'],
 	}
 
-
+	exec { "installing-tilestream-dependencies":
+		command => "npm install",
+		cwd => '/var/www/tilestream',
+		path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+		notify => Service['tilestream'],
+	}
 
 	file { 'tilestream-upstart':
 		path => '/etc/init/tilestream.conf',
 		content => template('tilestream/upstart.erb'),
-	} ->
-	exec { "installing-tilestream-dependencies":
-		command => "npm install",
-		cwd => '/var/www/tilestream',
-		path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:"
+		notify => Service['tilestream'],
 	} ~>
 	service { "tilestream":
 	  enable => true,
