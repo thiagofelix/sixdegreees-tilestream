@@ -8,14 +8,14 @@
 # UI Server
 #
 upstream ui {
-    server 127.0.0.1:9001;
+    server <%= @ipaddress %>:9001;
 }
 
 #
 # Tile Server
 #
 upstream tiles {
-    server 127.0.0.1:9000;
+    server <%= @ipaddress %>:9000;
 }
 
 #
@@ -23,7 +23,6 @@ upstream tiles {
 #
 server {
     listen 80;
-    server_name example.com;
     access_log  /var/log/nginx/tilestream.access.log;
 
     location /ui {

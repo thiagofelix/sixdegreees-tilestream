@@ -21,10 +21,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       node.vm.provision :shell, path: "puppet/bootstrap.sh"
       node.vm.provision :shell,
-        inline: "FACTER_ROLES=#{option[:role]} puppet apply --confdir puppet/ puppet/manifests/default.pp -vd"
+        inline: "FACTER_ROLES=#{option[:role]} FACTER_ipaddress=#{option[:ip]} puppet apply --confdir puppet/ puppet/manifests/default.pp -vd"
 
       node.vm.network :private_network, ip: option[:ip]
-      node.vm.network :forwarded_port, guest: 80, host: option[:port]
 
       node.vm.provider :virtualbox do |vb|
         vb.customize ['modifyvm', :id, '--memory', '256']

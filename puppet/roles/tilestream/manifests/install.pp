@@ -12,8 +12,8 @@ class tilestream::install {
 	include nginx
 
 	file { 'tilestream.conf':
-		path => '/etc/nginx/conf.d/default.conf',
-		source => 'puppet:///modules/tilestream/tilestream.conf',
+		path => '/etc/nginx/conf.d/tilestream.conf',
+		content => template('tilestream/tilestream.conf.erb'),
 		replace => true,
 	}
 
@@ -31,21 +31,19 @@ class tilestream::install {
 	file { 'tilestream-package.json':
 		path => '/var/www/tilestream/package.json',
 		source => 'puppet:///modules/tilestream/package.json',
-		notify => Exec['installing-tilestream-dependencies'],
-	}
-
+	}->
 	exec { "installing-tilestream-dependencies":
 		command => "npm install",
 		cwd => '/var/www/tilestream',
-		path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-		notify => Service['tilestream'],
+		path => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
 	}
 
 	file { 'tilestream-upstart':
 		path => '/etc/init/tilestream.conf',
-		content => template('tilestream/upstart.erb'),
+		content => template('tilestream/upstart.conf.erb'),
 		notify => Service['tilestream'],
-	} ~>
+	}
+
 	service { "tilestream":
 	  enable => true,
 		ensure => running,
